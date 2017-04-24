@@ -10,6 +10,7 @@ class StaticPagesControllerTest < ActionController::TestCase
     get :home
     assert_response :success
     assert_select "title", "Home | #{@common_title}"
+    assert_select "div.container"             # I added this, not in tutorial  
   end
 
   test "should get help" do
