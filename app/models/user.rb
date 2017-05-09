@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
                     uniqueness: { case_sensitive: false }    # since emails must be unique, checks before saving
   has_secure_password
   validates :password, length: { minimum: 6 }
-  validates :password, format: { with: /[a-z]+/ }
-  validates :password, format: { with: /[A-Z]+/ }
-  validates :password, format: { with: /\d+/ }
+  validates :password, format: { with: /[a-z]/ }
+  validates :password, format: { with: /[A-Z]/ }
+  validates :password, format: { with: /\d/ }
 end
