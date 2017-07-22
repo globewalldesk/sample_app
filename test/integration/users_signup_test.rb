@@ -23,6 +23,8 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     end
     assert_template 'users/show' # Asserts that show.html.erb is rendered
                                  # after following the redirect.
+    assert is_logged_in?
+    
   end
   
   test "flash messages appear as expected" do
@@ -52,5 +54,5 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select "div.alert"
     assert_select "div.alert-danger"
   end
-  
+
 end

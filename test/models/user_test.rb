@@ -86,5 +86,15 @@ class UserTest < ActiveSupport::TestCase
     @user.password = @user.password_confirmation = "Abcdef5"
     assert @user.valid?
   end
+  
+  # other tests #############################################
+  
+  # Subtle issue: if a user logs out in Chrome but not in Firefox, he would
+  # have no remember digest in the database, which would mean he'd be logged
+  # in but not authenticated. That's not how it should work; he should be
+  # logged out in absence of a remember digest.
+  test "authenticated? should return false for a user with nil digest" do
+    assert_not @user.authenticated?("")
+  end
 
 end
