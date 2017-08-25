@@ -19,5 +19,5 @@
 # Ignore Spring files.
 /spring/*.pid
 
-# Ignore Seeds file (passwords).
+# Ignore Seeds file (passwords to ignore).
 /db/seeds.rb
