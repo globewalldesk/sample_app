@@ -19,5 +19,5 @@
 # Ignore Spring files.
 /spring/*.pid
 
-# Ignore Seeds file (has passwords).
-/db/seeds.rb
+# Ignore Seeds file.
+/db/seeds.rb # Remove this line after the password is placed somewhere else.
