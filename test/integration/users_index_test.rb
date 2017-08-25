@@ -21,7 +21,7 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
       end
     end
     assert_difference('User.count', -1) do
-      delete user_path(@non_admin) #foobar
+      delete user_path(@non_admin)
     end
   end
   
