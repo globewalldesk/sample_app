@@ -146,6 +146,7 @@ footer {
   }
 }
 
+
 /* forms */
 
 input, textarea, select, .uneditable-input {
@@ -169,6 +170,7 @@ input, textarea, select, .uneditable-input {
   margin-left: 0;
 }
 
+
 /* miscellaneous */
 
 .debug_dump {
@@ -181,4 +183,17 @@ input, textarea, select, .uneditable-input {
 
 input {
   height: auto !important;
+}
+
+
+/* Users index */
+
+.users {
+  list-style: none;
+  margin: 0;
+  li {
+    overflow: auto;
+    padding: 10px 0;
+    border-bottom: 1px solid $gray-lighter;
+  }
 }

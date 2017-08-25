@@ -1,3 +1,4 @@
+# This could be called "Views Helper." Not sure why it isn't.
 module ApplicationHelper
 
   # Returns the full title on a per-page basis.

@@ -1,10 +1,12 @@
 <% if @user.errors.any? %>
+  <% full_messages = 
+     massage_error_messages(@user.errors.full_messages)  # Prep messages. %>
   <div id="error_explanation">
     <div class="alert alert-danger">
-      The form contains <%= pluralize(@user.errors.count, "error") %>.
+      The form contains <%= pluralize(full_messages.length, "error") %>.
     </div>
     <ul>
-      <% @user.errors.full_messages.each do |msg| %>
+      <% full_messages.each do |msg| %>
         <div class="error_message">
           <li><%= msg %>.</li>
         </div>

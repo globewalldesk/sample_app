@@ -3,20 +3,16 @@ class SessionsController < ApplicationController
   end
   
   def create
-    user = User.find_by(email: params[:session][:email].downcase)
-    if user && user.authenticate(params[:session][:password])
+    @user = User.find_by(email: params[:session][:email].downcase)
+    if @user && @user.authenticate(params[:session][:password])
       # Log the user in.
-      log_in(user)
+      log_in(@user)
       # In models/users.rb.
-      params[:session][:remember_me] == '1' ? remember(user) : forget(user)
-      redirect_to(user)
+      params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
+      redirect_back_or @user
     else
       # Create an error message.
-      if ! user
-        flash.now[:danger] = "User not found."
-      else
-        flash.now[:danger] = "Password incorrect."
-      end
+      flash.now[:danger] = (! @user ? "User not found." : "Password incorrect.")
       render 'new'
     end
   end
