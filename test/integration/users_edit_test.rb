@@ -19,8 +19,10 @@ class UsersEditTest < ActionDispatch::IntegrationTest
  
   test "successful edit with friendly forwarding" do
     get edit_user_path(@user)
+    assert_not_nil session[:forwarding_url] # Yes, there is a forwarding url.
     log_in_as(@user)
     assert_redirected_to edit_user_path(@user)
+    assert_nil session[:forwarding_url] # Now the forwarding url is gone.
     name  = "Fester Bestertester"
     email = "fester@tester.com"
     patch user_path(@user), user: { name: name,

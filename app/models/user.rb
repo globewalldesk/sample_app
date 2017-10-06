@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
-  attr_accessor :remember_token
-  before_save { email.downcase! } # downcases email before saving so case-sensitive indexers don't break
+  attr_accessor :remember_token, :activation_token
+  before_save :downcase_email # downcases email before saving so case-sensitive indexers don't break
+  before_create :create_activation_digest
   validates :name,  presence: true,  length: { maximum: 50 } # auto-validation, very cool
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i   # used to check that input email is hip to the groove
   validates :email, presence: true, length: { maximum: 255 },
@@ -24,7 +25,7 @@ class User < ActiveRecord::Base
     def new_token
       SecureRandom.urlsafe_base64
     end
-  end
+  end # Of class methods.
   
   # Remembers a user in the database for use in persistent sessions.
   # This is used in sessions_controller.rb via sessions_helper.rb.
@@ -34,9 +35,10 @@ class User < ActiveRecord::Base
   end
   
   # Returns true if the given token matches the digest
-  def authenticated?(remember_token)
-    return false if remember_digest.nil? # Helps the user log out.
-    BCrypt::Password.new(remember_digest).is_password?(remember_token)
+  def authenticated?(attribute, token)
+    digest = send("#{attribute}_digest")
+    return false if digest.nil?
+    BCrypt::Password.new(digest).is_password?(token)
   end
   
   # Forgets a user.
@@ -46,4 +48,30 @@ class User < ActiveRecord::Base
     # where it is used.
     update_attribute(:remember_digest, nil)
   end
+  
+  # Activates an account.
+  def activate
+    update_attribute(:activated,    true)
+    update_attribute(:activated_at, Time.zone.now)
+  end
+  
+  # Sends activation email.
+  def send_activation_email
+    # Opens mailer, creates an #account_activation email, delivers it.
+    UserMailer.account_activation(self).deliver_now
+  end
+  
+  private
+  
+    # Converts email to all-lowercase.
+    def downcase_email
+      self.email = email.downcase
+    end
+    
+    # Creates and assigns the activation token (N.B.!) and digest.
+    def create_activation_digest
+      self.activation_token = User.new_token
+      self.activation_digest = User.digest(activation_token)
+    end
+    
 end

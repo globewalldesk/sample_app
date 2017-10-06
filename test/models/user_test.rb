@@ -94,7 +94,7 @@ class UserTest < ActiveSupport::TestCase
   # in but not authenticated. That's not how it should work; he should be
   # logged out in absence of a remember digest.
   test "authenticated? should return false for a user with nil digest" do
-    assert_not @user.authenticated?("")
+    assert_not @user.authenticated?(:remember, "")
   end
 
 end
