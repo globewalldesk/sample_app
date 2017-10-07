@@ -12,14 +12,17 @@ class SessionsController < ApplicationController
       redirect_back_or @user
     else
       # Create an error message depending on the problem.
-      flash.now[:danger] = 
-        if ! @user
-          "User not found."
-        elsif ! @user.authenticate(params[:session][:password])
-          "Password incorrect."
-        elsif ! @user.activated?
-          "Account not activated."
-        end
+      if ! @user
+        flash.now[:danger] ="User not found."
+      elsif ! @user.authenticate(params[:session][:password])
+        flash.now[:danger] = "Password incorrect."
+      elsif ! @user.activated?
+        # Gives the user a handy reactivation button right in the flash.
+        flash.now[:danger] = "Hi #{@user.name}! Your account needs to be 
+                              activated. #{view_context.link_to('Want a new 
+                              activation email?', reactivate_user_path(@user), 
+                              method: :post)}"
+      end
       render 'new'
     end
   end

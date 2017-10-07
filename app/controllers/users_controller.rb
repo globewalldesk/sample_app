@@ -42,12 +42,24 @@ class UsersController < ApplicationController
   
   def destroy
     victim = User.find(params[:id])
-    name = victim.name
     victim.destroy
-    flash[:success] = "User #{name} deleted."
+    flash[:success] = "User #{victim.name} deleted."
     redirect_to users_url
   end
     
+  # Resends activation email. This has its own 'reactivate' route (see 
+  # routes.rb) and the route is followed only via a link, contained in an error 
+  # flash, found at sessions_controller.rb.
+  def reactivate
+    @user = User.find(params[:id])
+    @user.create_activation_digest
+    @user.update_attribute(:activation_digest, @user.activation_digest)
+    @user.send_activation_email
+    flash[:info] = "Click the activation link we just emailed you, 
+                    and we'll log you in."
+    redirect_to root_url
+  end
+
   private
     
     def user_params

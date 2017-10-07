@@ -50,13 +50,47 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_not_nil flash[:success]
   end
   
+  test "workflow for resending activation email" do
+    # User creates account without activating account.
+    get signup_path
+    post users_path, user: { name:                  "Bart Simpson",
+                             email:                 "bart@simpson.com",
+                             password:              "Password9",
+                             password_confirmation: "Password9" }
+    user = assigns(:user)
+    assert_redirected_to root_url
+    old_activation_token = user.activation_token.dup
+    # Upon login try, user is shown the option to have activation link re-sent.
+    get login_path
+    log_in_as(user, password: user.password)
+    refute is_logged_in?
+    assert flash[:danger]
+    assert_select "a[href=?]", reactivate_user_path(user.id)
+    # Requesting new link brings up front page with invitation to check email.
+    post reactivate_user_path(user.id) # Send new link.
+    user.create_activation_digest
+    user = assigns(:user)
+    assert flash[:info]
+    assert_redirected_to root_url
+    # Now the old link doesn't work and doesn't log the user in.
+    get edit_account_activation_path(old_activation_token, email: user.email)
+    refute user.reload.activated?
+    assert_not is_logged_in?
+    assert_not_nil flash[:danger]
+    # Clicking the new link activates the account and logs the user in.
+    get edit_account_activation_path(user.activation_token, email: user.email)
+    assert user.reload.activated?
+    assert is_logged_in?
+    follow_redirect!
+    assert flash[:success]
+  end
+
   test "flash messages appear as expected" do
     get signup_path
     post_via_redirect users_path, user: { name: "Foo Bar", email: "good@ex.com",
                                           password: "FooB4rry", 
                                           password_confirmation: "FooB4rry" }
-    assert_select "div.alert"
-    assert_select "div.alert-info"
+    assert flash[:info]
     post_via_redirect users_path, user: { name: "Foo Bar", email: "bad@ema%@il",
                                           password: "FooB4rry", 
                                           password_confirmation: "FooB4rry" }
