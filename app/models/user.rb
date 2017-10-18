@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  attr_accessor :remember_token, :activation_token
+  attr_accessor :remember_token, :activation_token, :reset_token
   before_save :downcase_email # downcases email before saving so case-sensitive indexers don't break
   before_create :create_activation_digest
   validates :name,  presence: true,  length: { maximum: 50 } # auto-validation, very cool
@@ -9,9 +9,9 @@ class User < ActiveRecord::Base
                     uniqueness: { case_sensitive: false }    # since emails must be unique, checks before saving
   has_secure_password
   validates :password, length: { minimum: 6 }
-  validates :password, format: { with: /[a-z]/ }
-  validates :password, format: { with: /[A-Z]/ }
-  validates :password, format: { with: /\d/ }
+  validates :password, format: { with: /[a-z]/, message: "needs at least one lowercase letter" }
+  validates :password, format: { with: /[A-Z]/, message: "needs at least one lowercase letter" }
+  validates :password, format: { with: /\d/, message: "needs at least one number" }
   
   class << self
     # Returns the hash digest of the given string.
@@ -59,6 +59,23 @@ class User < ActiveRecord::Base
   def send_activation_email
     # Opens mailer, creates an #account_activation email, delivers it.
     UserMailer.account_activation(self).deliver_now
+  end
+  
+  # Sets the password reset attributes.
+  def create_reset_digest
+    self.reset_token = User.new_token
+    update_attribute(:reset_digest, User.digest(reset_token))
+    update_attribute(:reset_sent_at, Time.zone.now)
+  end
+  
+  # Sends password reset email.
+  def send_password_reset_email
+    UserMailer.password_reset(self).deliver_now
+  end
+  
+  # Returns true if a password reset has expired.
+  def password_reset_expired?
+    reset_sent_at < 2.hours.ago
   end
 
   # Converts email to all-lowercase.
