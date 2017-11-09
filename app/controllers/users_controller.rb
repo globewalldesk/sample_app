@@ -4,11 +4,16 @@ class UsersController < ApplicationController
   before_action :admin_user, only: [:destroy]
   
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
   
   def show
     @user = User.find(params[:id])
+    unless @user.activated?
+      flash[:danger] = "Sorry, #{@user.name}'s account has not been activated."
+      redirect_to root_url
+    end
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def new
@@ -69,15 +74,6 @@ class UsersController < ApplicationController
     
     # Before filters 
     # because these "filter" the controller for access
-    
-    # Confirms a logged-in user.
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "Please log in."
-        redirect_to login_url
-      end
-    end
     
     # Confirms the correct user.
     def correct_user

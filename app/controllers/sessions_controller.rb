@@ -18,9 +18,10 @@ class SessionsController < ApplicationController
         flash.now[:danger] = "Password incorrect."
       elsif ! @user.activated?
         # Gives the user a handy reactivation button right in the flash.
-        flash.now[:danger] = "Hi #{@user.name}! Your account needs to be 
-                              activated. #{view_context.link_to('Want a new 
-                              activation email?', reactivate_user_path(@user), 
+        flash.now[:danger] = "Hi #{@user.name}! You need to activate your 
+                              account before you can log in. 
+                              #{view_context.link_to('Want a new activation 
+                              email?', reactivate_user_path(@user), 
                               method: :post)}"
       end
       render 'new'

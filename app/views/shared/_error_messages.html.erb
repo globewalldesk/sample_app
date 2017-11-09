@@ -1,12 +1,12 @@
-<% if @user.errors.any? %>
+<% if object.errors.any? %>
   <% full_messages = 
-     massage_error_messages(@user.errors.full_messages)  # Prep messages. %>
+     object.errors.full_messages.uniq  # Discard duplicates. %>
   <div id="error_explanation">
     <div class="alert alert-danger">
       The form contains <%= pluralize(full_messages.length, "error") %>.
     </div>
     <ul>
-      <% full_messages.each do |msg| %>
+      <% object.errors.full_messages.each do |msg| %>
         <div class="error_message">
           <li><%= msg %>.</li>
         </div>

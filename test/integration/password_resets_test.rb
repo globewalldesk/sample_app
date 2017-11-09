@@ -60,4 +60,23 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     assert_redirected_to user
   end
   
+  test "expired_token_properly_announced" do
+    # Strategy: create a new token and change its :reset_sent_at so it's expired.
+    # Create token.
+    get new_password_reset_path
+    post password_resets_path, password_reset: { email: @user.email }
+    user = assigns(:user)
+    # Load page for submitting new password.
+    get edit_password_reset_path(user.reset_token, email: user.email)
+    # Change :reset_sent_at so it's expired.
+    user.update_attribute(:reset_sent_at, 3.hours.ago)
+    patch password_reset_path(user.reset_token),
+          email: user.email,
+          user:  { password:              "Foobaz7",
+                   password_confirmation: "Foobaz7" }
+    assert_response :redirect
+    follow_redirect!
+    assert_match(/expired/i, flash[:danger])
+  end
+  
 end

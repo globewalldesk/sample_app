@@ -8,8 +8,4 @@ module UsersHelper
     image_tag(gravatar_url, alt: user.name, class: "gravatar")
   end
   
-  # Fiddle with contents of error messages (e.g., toss dups).
-  def massage_error_messages(messages)
-    messages = messages.uniq
-  end
 end
