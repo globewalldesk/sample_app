@@ -21,3 +21,6 @@
 
 # Ignore Seeds file (passwords to ignore).
 /db/seeds.rb
+
+# Ignore uploaded test images.
+/public/uploads
