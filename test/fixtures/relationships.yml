@@ -1,0 +1,15 @@
+one:
+  follower: god
+  followed: lana
+
+two:
+  follower: god
+  followed: mallory
+
+three:
+  follower: lana
+  followed: god
+
+four:
+  follower: archer
+  followed: god

@@ -96,7 +96,31 @@ class UserTest < ActiveSupport::TestCase
       @user.destroy
     end
   end
-  
+
+  # following and feed tests #############################################
+
+  test "should follow and unfollow a user" do
+    god = users(:god)
+    archer = users(:archer)
+    assert_not god.following?(archer)
+    god.follow(archer)
+    assert god.following?(archer)
+    assert archer.followers(god)
+    god.unfollow(archer)
+    assert_not god.following?(archer)
+  end
+
+  test "feed should have the right posts" do
+    god = users(:god)
+    archer = users(:archer)
+    lana = users(:lana)
+    # Posts from followed user
+    lana.microposts.each do |post_following|
+      assert michael.feed.include?(post_following)
+    end
+  end
+
+
   # other tests #############################################
   
   # Subtle issue: if a user logs out in Chrome but not in Firefox, he would
