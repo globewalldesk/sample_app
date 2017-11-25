@@ -114,9 +114,17 @@ class UserTest < ActiveSupport::TestCase
     god = users(:god)
     archer = users(:archer)
     lana = users(:lana)
-    # Posts from followed user
+    # Posts from followed user should be included
     lana.microposts.each do |post_following|
-      assert michael.feed.include?(post_following)
+      assert god.feed.include?(post_following)
+    end
+    # Posts from self should be included
+    god.microposts.each do |post_self|
+      assert god.feed.include?(post_self)
+    end
+    # Posts from unfollowed user NOT included
+    archer.microposts.each do |post_unfollowed|
+      assert_not god.feed.include?(post_unfollowed)
     end
   end
 
