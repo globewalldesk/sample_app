@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   validates :password, format: { with: /[a-z]/,
                                  message: "needs at least one lowercase letter" }
   validates :password, format: { with: /[A-Z]/,
-                                 message: "needs at least one lowercase letter" }
+                                 message: "needs at least one uppercase letter" }
   validates :password, format: { with: /\d/,
                                  message: "needs at least one number" }
 
